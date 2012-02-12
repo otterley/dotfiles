@@ -11,7 +11,7 @@ shopt -s histappend;
 shopt -s no_empty_cmd_completion;
 
 # Various settings.
-LESS='-MM -R';		# `less' options.
+export LESS='-MR';		# `less' options.
 HISTSIZE=2000;		# At most 2000 entries.
 HISTCONTROL=ignoredups;	# No duplicates.
 IGNOREEOF=0;		# Exit bash at the first EOF.
