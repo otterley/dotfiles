@@ -7,6 +7,7 @@ shopt -s checkhash;
 shopt -s checkwinsize;
 shopt -s cmdhist;
 shopt -s dotglob;
+shopt -s extglob;
 shopt -s histappend;
 shopt -s no_empty_cmd_completion;
 
@@ -14,7 +15,10 @@ shopt -s no_empty_cmd_completion;
 export LESS='-MR';		# `less' options.
 HISTSIZE=2000;		# At most 2000 entries.
 HISTCONTROL=ignoredups;	# No duplicates.
+HISTIGNORE="&:ls:ls *:[bf]g:exit"
 IGNOREEOF=0;		# Exit bash at the first EOF.
+HISTFILE=~/.bash_history;
+FIGNORE='.o:.lo:.class:~';  # Ignore some files in file name completion.
 
 # Pager functions.
 if type -p less >/dev/null 2>&1; then
@@ -46,6 +50,23 @@ fi
 
 FCEDIT="$EDITOR";	# The editor used by the 'fc' builtin command.
 TEXTEDIT="$EDITOR";	# Some programs use TEXTEDIT instead.
+
+# Set up completion.
+if [ -z "$BASH_COMPLETION" ]; then
+  if [ \( "${BASH_VERSINFO[0]}" -eq 2 -a "${BASH_VERSINFO[1]}" \< 05 \) -o "${BASH_VERSINFO[0]}" -lt 2 ]; then
+    : # skip
+  else
+    case "$OS" in
+      Darwin)
+        __BASH_COMPLETION_PREFIX=$(brew --prefix);;
+      Linux)
+        __BASH_COMPLETION_PREFIX="";;
+    esac
+    if [ -f $__BASH_COMPLETION_PREFIX/etc/bash_completion ]; then
+      source $__BASH_COMPLETION_PREFIX/etc/bash_completion
+    fi
+  fi
+fi
 
 # This is exported at `su' with the wrong value.
 unset -v MAIL;
@@ -96,10 +117,6 @@ fi
 # Create my local ~/tmp directory.
 mkdir ~/tmp 2>/dev/null;
 TMPDIR=~/tmp;
-
-# Some bash settings.
-HISTFILE=~/.bash_history;
-FIGNORE='.o:.lo:.class:~';  # Ignore some files in file name completion.
 
 # Read the personal/site-dependent configuration file.
 if [ -f ~/.bashrc_local ]; then
