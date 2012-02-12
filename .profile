@@ -16,19 +16,8 @@ HISTSIZE=2000;		# At most 2000 entries.
 HISTCONTROL=ignoredups;	# No duplicates.
 IGNOREEOF=0;		# Exit bash at the first EOF.
 
-# Arguments for ps.  System dependent.
-if [ x"$OS" = x"Linux" -o x"$OS" = x"ULTRIX" ]; then
-    # Linux, ULTRIX
-    __PS_ARGS='aux';
-    __PS_LARGS='auxw';
-else
-    # HP-UX, SunOS
-    __PS_ARGS='-ef';
-    __PS_LARGS='-efl';
-fi
-
 # Pager functions.
-if [ "$HAVE_LESS" ]; then
+if type -p less >/dev/null 2>&1; then
     function pager() { less "$@"; }
     function more()  { less "$@"; }
     PAGER=less;
@@ -43,10 +32,6 @@ GIT_BROWSER="browser";
 
 # Set OS environment variable
 OS="$(uname -sr|awk '$1=="SunOS"&&$2>5{print"Solaris";exit};{print$1}')"
-
-# Check for the presence of 'less'.
-type -path less >/dev/null 2>&1;
-if [ $? -eq 0 ]; then HAVE_LESS=yes; else unset -v HAVE_LESS; fi
 
 # Check for the presence of 'vim'.
 type -path vim >/dev/null 2>&1;
@@ -203,11 +188,11 @@ fi
 # OS X uses LSCOLORS instead.
 LSCOLORS="hxfxcxdxbxegedabagacad"
 
-if [ x"$__TERM_HAS_COLORS" = x"yes" -a -t 1 ]; then
+if [ "$__TERM_HAS_COLORS" = "yes" -a -t 1 ]; then
   __LS=$(type -p ls)
   if [ "$OS" = "Linux" ]; then
     function ls() { $__LS -CFp --color=yes "$@"; };
-  elif [ x"$OS" = x"Darwin" ]; then
+  elif [ "$OS" = "Darwin" ]; then
     function ls() { $__LS -CFpG "$@"; };
   fi
 fi
@@ -222,16 +207,11 @@ stty hupcl isig -ixon kill "^U" intr "^C" eof "^D";
 stty stop "^-" erase "^?";
 
 # Set the window title and icon strings, if TERM supports it.
-if [ x"$TERM" = x"xterm" -o\
-     x"$TERM" = x"xterm-color" -o\
-     x"$TERM" = x"xterm-debian" -o\
-     x"$TERM" = x"rxvt" -o\
-     x"$TERM" = x"xterms" -o\
-     x"$TERM" = x"dtterm" -o\
-     x"$TERM" = x"aixterm" -o\
-     x"$TERM" = x"iris-ansi" -o\
-     x"$TERM" = x"iris-ansi-net" -o\
-     x"$TERM" = x"cygwin" ]; then
+if [ "$TERM" = "xterm" -o\
+     "$TERM" = "xterm-color" -o\
+     "$TERM" = "xterm-256color" -o\
+     "$TERM" = "xterm-debian" -o\
+     "$TERM" = "rxvt" ]; then
     PROMPT_COMMAND='echo -ne "\033]1;$BASEHOSTNAME\007\033]2;$OS Shell"';
     PROMPT_COMMAND="$PROMPT_COMMAND"'" - $USER@$BASEHOSTNAME : $PWD\007"';
 else
@@ -271,3 +251,5 @@ fi
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 # vim:syn=sh:ts=2:sw=2:et:ai
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
