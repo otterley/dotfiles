@@ -268,6 +268,6 @@ if [ -n "$PS1" ]; then
   echo "Happy hacking!";
 fi
 
-[[ -s "~/.rvm/scripts/rvm" ]] && source "~/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 # vim:syn=sh:ts=2:sw=2:et:ai
