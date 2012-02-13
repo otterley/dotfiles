@@ -144,6 +144,55 @@ MANPATH="$MANPATH:/usr/local/man";
 # We don't want to display the full host name on the xterm title...
 BASEHOSTNAME="`echo "$HOSTNAME" | cut -d. -f1`";
 
+# rvm initialization
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  source "$HOME/.rvm/scripts/rvm"
+elif [[ -s "/usr/local/lib/rvm" ]]; then
+  source "/usr/local/lib/rvm"
+fi
+
+##############################################################################
+# Functions and aliases
+##############################################################################
+
+__SSH=$(type -path ssh 2>/dev/null);
+function ssh()
+{
+    local skip_sync;
+    if ! type -f rsync 2>&1 >/dev/null; then
+        # we don't have rsync.
+        skip_sync=1;
+    fi
+    if [ ! -f "$HOME/.briefcase" ]; then
+        skip_sync=1;
+    fi
+    # skip ssh options to find hostname
+    while getopts ":1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:i:L:l:m:O:o:p:R:S:w:" Option; do
+        if [ "$Option" = "l" ]; then
+            # don't sync if we're logging into a different user's account
+            skip_sync=1;
+            break;
+        fi
+    done
+    server=`eval echo "$"$OPTIND`
+    # reset $OPTIND so that subsequent invocations work properly
+    OPTIND=1;
+    if echo "$server" | grep "@"; then
+        # don't sync if we're logging into a different user's account
+        skip_sync=1;
+    fi
+    if [ -z "$skip_sync" -a -z "$DISABLE_BRIEFCASE" ]; then
+        rsync -vurptgoDL -e ssh --files-from="$HOME/.briefcase" "$HOME" "$server":
+    fi
+    $__SSH "$@";
+}
+
+function rsa_modulus { openssl rsa -modulus -noout -in $1; }
+function x509_modulus { openssl x509 -modulus -noout -in $1; }
+
+##############################################################################
+# Only terminal-related stuff beyond this point
+##############################################################################
 
 # Quit .profile if stdin is not a terminal.
 if [ ! -t 0 ]; then
@@ -265,8 +314,4 @@ if [ -n "$PS1" ]; then
   echo "Happy hacking!";
 fi
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
 # vim:syn=sh:ts=2:sw=2:et:ai
-
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting

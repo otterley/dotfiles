@@ -18,6 +18,7 @@ endif
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 set modelines=5
+set rtp+=/usr/share/vim/addons
 
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
@@ -38,12 +39,14 @@ set incsearch		" do incremental searching
 " Don't use Ex mode, use Q for formatting
 map Q gq
 
-" In an xterm the mouse should work quite well, thus enable it.
-" set mouse=a
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
 
-" This is an alternative that also works in block mode, but the deleted
-" text is lost and it only works for putting the current register.
-"vnoremap p "_dp
+" In an xterm the mouse should work quite well, thus enable it.
+if has('mouse')
+  set mouse=a
+endif
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
@@ -68,6 +71,7 @@ if has("autocmd")
 
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
+  autocmd FileType ruby setlocal sw=2 ts=2 et ai
   autocmd FileType perl setlocal ts=4 sw=4 et ai
   autocmd FileType javascript setlocal ts=2 sw=2 et ai
 
@@ -89,5 +93,8 @@ endif " has("autocmd")
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
-command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-	 	\ | wincmd p | diffthis
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
+endif

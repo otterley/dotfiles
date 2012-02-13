@@ -1,0 +1,11 @@
+.profile
+.briefcase
+.ssh/config
+.ssh/authorized_keys
+.gnupg/gpg.conf
+.gnupg/pubring.gpg
+.gnupg/secring.gpg
+.gnupg/trustdb.gpg
+.gitconfig
+.inputrc
+.vimrc
