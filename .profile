@@ -136,7 +136,7 @@ fi
 
 # Use $HOME here, `/usr/bin/which' doesn't know how to expand `~'.
 PATH="$HOME/bin:$HOME/sbin:/usr/local/bin:/usr/local/sbin";
-PATH="$PATH:/usr/bin:/usr/sbin:/bin:sbin";
+PATH="$PATH:/usr/bin:/usr/sbin:/bin:/sbin";
 
 # Set the MANPATH environment variable.  Add here as needed.
 MANPATH="$MANPATH:/usr/local/man";
