@@ -195,123 +195,122 @@ function x509_modulus { openssl x509 -modulus -noout -in $1; }
 ##############################################################################
 
 # Quit .profile if stdin is not a terminal.
-if [ ! -t 0 ]; then
-  return 0;
-fi
-
-if [ "$TERM" = "linux" -o\
-     "$TERM" = "aixterm" -o\
-     "$TERM" = "dtterm" -o\
-     "$TERM" = "iris-ansi" -o\
-     "$TERM" = "iris-ansi-net" -o\
-     "$TERM" = "xterm" -o\
-     "$TERM" = "xterm-256color" -o\
-     "$TERM" = "xterms" -o\
-     "$TERM" = "xterm-debian" -o\
-     "$TERM" = "rxvt" -o\
-     "$TERM" = "screen" -o\
-     "$TERM" = "xterm-color" -o\
-     "$TERM" = "cygwin" ]; then
-    __TERM_HAS_COLORS=yes;
-else
-    __TERM_HAS_COLORS=no;
-fi
-
-# Unset COLORTERM if we're not running on a xterm-like terminal emulator.
-if [ "$__TERM_HAS_COLORS" = "no" ]; then
-    unset -v COLORTERM;
-fi
-
-# Fancy ls.  You still get colors under Linux, even when you use a pipe.
-# Make sure you use the regular ls (which is not modified by this file)
-# when you _really_ need to filter out the color codes in pipes.
-#
-# This works for Linux only, the -C & -p options are different for HP-UX,
-# Sun, etc.  To be fixed.
-#
-# Overwrite LS_OPTIONS defined by Linux in /etc/profile.
-# BLACK/RED/GREEN/YELLOW/BLUE/MAGENTA/CYAN/WHITE: 0/../7
-LS_COLORS="\
-or=41:ln=34:bd=34:cd=35:pi=45;32:\
-*.c=32:*.cc=32:*.cpp=32:*.h=32:*.java=32:*.l=32:*.y=32:*.s=32:\
-*.m4=32:*.pl=32:*.el=32:*.lisp=32:*.in=32:\
-*.o=34:*.a=34:*.so=34:*.lo=34:*.la=34:*.elc=34:*.class=34:\
-*.ps=35:*.eps=35:*.fig=35:*.dvi=35:*.pdf=35:*.gif=35:*.jpg=35:*.jpeg=35:\
-*.djv=35:*.tif=35:*.tiff=35:*.bmp=35:*.png=35:*.ppm=35:*.pgm=35:*.pbm=35:\
-*.xpm=35:*.xpm=35:*.icon=35:*.ras=35:*.tga=35:*.mov=35:*.mpg=35:*.mpeg=35:\
-*.avi=35:*.fli=35:*.flc=35:\
-*.au=33:*.wav=33:*.mp3=33:*.ra=33:*.ram=33:*.mod=33:*.midi=33:*.voc=33:\
-*.aiff=33:*.rmd=33:\
-*.Z=31:*.bz2=31:*.gz=31:*.uu=31:*.shar=31:*.arj=31:*.zip=31:*.rar=31:\
-*.jar=31:*.tar=31:*.tgz=31:*.taz=31:*.rpm=31:";
-
-if [ "$TERM" = "linux" ]; then
-    LS_COLORS="$LS_COLORS:di=36;1:so=45;33;1:ex=44;33;1:";
-else
-    LS_COLORS="$LS_COLORS:di=36:so=45;33:ex=44;33:";
-fi
-
-# OS X uses LSCOLORS instead.
-LSCOLORS="hxfxcxdxbxegedabagacad"
-
-if [ "$__TERM_HAS_COLORS" = "yes" -a -t 1 ]; then
-  __LS=$(type -p ls)
-  if [ "$OS" = "Linux" ]; then
-    function ls() { $__LS -CFp --color=yes "$@"; };
-  elif [ "$OS" = "Darwin" ]; then
-    function ls() { $__LS -CFpG "$@"; };
+if [ -t 0 ]; then
+  if [ "$TERM" = "linux" -o\
+       "$TERM" = "aixterm" -o\
+       "$TERM" = "dtterm" -o\
+       "$TERM" = "iris-ansi" -o\
+       "$TERM" = "iris-ansi-net" -o\
+       "$TERM" = "xterm" -o\
+       "$TERM" = "xterm-256color" -o\
+       "$TERM" = "xterms" -o\
+       "$TERM" = "xterm-debian" -o\
+       "$TERM" = "rxvt" -o\
+       "$TERM" = "screen" -o\
+       "$TERM" = "xterm-color" -o\
+       "$TERM" = "cygwin" ]; then
+      __TERM_HAS_COLORS=yes;
+  else
+      __TERM_HAS_COLORS=no;
   fi
-fi
 
-# System dependent terminal settings.
-#
-# In order to be able to use C-s with bash to perform
-# forward-search-history, add `stty stop "^-"' to undefine the stop
-# character (the default on my Linux box).
-#
-stty hupcl isig -ixon kill "^U" intr "^C" eof "^D";
-stty stop "^-" erase "^?";
+  # Unset COLORTERM if we're not running on a xterm-like terminal emulator.
+  if [ "$__TERM_HAS_COLORS" = "no" ]; then
+      unset -v COLORTERM;
+  fi
 
-# Set the window title and icon strings, if TERM supports it.
-if [ "$TERM" = "xterm" -o\
-     "$TERM" = "xterm-color" -o\
-     "$TERM" = "xterm-256color" -o\
-     "$TERM" = "xterm-debian" -o\
-     "$TERM" = "rxvt" ]; then
-    PROMPT_COMMAND='echo -ne "\033]1;$BASEHOSTNAME\007\033]2;$OS Shell"';
-    PROMPT_COMMAND="$PROMPT_COMMAND"'" - $USER@$BASEHOSTNAME : $PWD\007"';
-else
-    unset -v PROMPT_COMMAND;
-fi
+  # Fancy ls.  You still get colors under Linux, even when you use a pipe.
+  # Make sure you use the regular ls (which is not modified by this file)
+  # when you _really_ need to filter out the color codes in pipes.
+  #
+  # This works for Linux only, the -C & -p options are different for HP-UX,
+  # Sun, etc.  To be fixed.
+  #
+  # Overwrite LS_OPTIONS defined by Linux in /etc/profile.
+  # BLACK/RED/GREEN/YELLOW/BLUE/MAGENTA/CYAN/WHITE: 0/../7
+  LS_COLORS="\
+  or=41:ln=34:bd=34:cd=35:pi=45;32:\
+  *.c=32:*.cc=32:*.cpp=32:*.h=32:*.java=32:*.l=32:*.y=32:*.s=32:\
+  *.m4=32:*.pl=32:*.el=32:*.lisp=32:*.in=32:\
+  *.o=34:*.a=34:*.so=34:*.lo=34:*.la=34:*.elc=34:*.class=34:\
+  *.ps=35:*.eps=35:*.fig=35:*.dvi=35:*.pdf=35:*.gif=35:*.jpg=35:*.jpeg=35:\
+  *.djv=35:*.tif=35:*.tiff=35:*.bmp=35:*.png=35:*.ppm=35:*.pgm=35:*.pbm=35:\
+  *.xpm=35:*.xpm=35:*.icon=35:*.ras=35:*.tga=35:*.mov=35:*.mpg=35:*.mpeg=35:\
+  *.avi=35:*.fli=35:*.flc=35:\
+  *.au=33:*.wav=33:*.mp3=33:*.ra=33:*.ram=33:*.mod=33:*.midi=33:*.voc=33:\
+  *.aiff=33:*.rmd=33:\
+  *.Z=31:*.bz2=31:*.gz=31:*.uu=31:*.shar=31:*.arj=31:*.zip=31:*.rar=31:\
+  *.jar=31:*.tar=31:*.tgz=31:*.taz=31:*.rpm=31:";
 
-# __USER, __HOST & __PATH can be defined in .sitedep, if colors are
-# supported.  Suggested by Andrei Pitis <pink@roedu.net>.
-if [ "$__TERM_HAS_COLORS" = "yes" ]; then
-    if [ -n $__USER ]; then __USER="\[\033[31m\]"; fi
-    if [ -n $__HOST ]; then __HOST="\[\033[32m\]"; fi
-    if [ -n $__PATH ]; then __PATH="\[\033[36m\]"; fi
-    __DFLT="\[\033[0m\]";
-else
-    __USER="";
-    __HOST="";
-    __PATH="";
-    __DFLT="";
-fi
+  if [ "$TERM" = "linux" ]; then
+      LS_COLORS="$LS_COLORS:di=36;1:so=45;33;1:ex=44;33;1:";
+  else
+      LS_COLORS="$LS_COLORS:di=36:so=45;33:ex=44;33:";
+  fi
 
+  # OS X uses LSCOLORS instead.
+  LSCOLORS="hxfxcxdxbxegedabagacad"
 
-if [ -n "$PS1" ]; then
-  # Linux >= 2.2.x supports fancy text mode cursors.
-  if [ "$OS" = "Linux" -a "$TERM" = "linux" ]; then
-    __RELEASE=`uname -r`;
-    if [ $(echo $__RELEASE | cut -d. -f1) -ge 2 -a $(echo $__RELEASE | cut -d. -f1) -ge 2 ]; then
-      echo -ne '\033[?64c';
+  if [ "$__TERM_HAS_COLORS" = "yes" -a -t 1 ]; then
+    __LS=$(type -p ls)
+    if [ "$OS" = "Linux" ]; then
+      function ls() { $__LS -CFp --color=yes "$@"; };
+    elif [ "$OS" = "Darwin" ]; then
+      function ls() { $__LS -CFpG "$@"; };
     fi
   fi
 
-  PS1="$__DFLT[$__USER$USER$__DFLT@$__HOST\h$__DFLT]:$__PATH\w$__DFLT "'\$ ';
+  # System dependent terminal settings.
+  #
+  # In order to be able to use C-s with bash to perform
+  # forward-search-history, add `stty stop "^-"' to undefine the stop
+  # character (the default on my Linux box).
+  #
+  stty hupcl isig -ixon kill "^U" intr "^C" eof "^D";
+  stty stop "^-" erase "^?";
 
-  fortune 2> /dev/null;
-  echo "Happy hacking!";
+  # Set the window title and icon strings, if TERM supports it.
+  if [ "$TERM" = "xterm" -o\
+       "$TERM" = "xterm-color" -o\
+       "$TERM" = "xterm-256color" -o\
+       "$TERM" = "xterm-debian" -o\
+       "$TERM" = "rxvt" ]; then
+      PROMPT_COMMAND='echo -ne "\033]1;$BASEHOSTNAME\007\033]2;$OS Shell"';
+      PROMPT_COMMAND="$PROMPT_COMMAND"'" - $USER@$BASEHOSTNAME : $PWD\007"';
+  else
+      unset -v PROMPT_COMMAND;
+  fi
+
+  # __USER, __HOST & __PATH can be defined in .sitedep, if colors are
+  # supported.  Suggested by Andrei Pitis <pink@roedu.net>.
+  if [ "$__TERM_HAS_COLORS" = "yes" ]; then
+      if [ -n $__USER ]; then __USER="\[\033[31m\]"; fi
+      if [ -n $__HOST ]; then __HOST="\[\033[32m\]"; fi
+      if [ -n $__PATH ]; then __PATH="\[\033[36m\]"; fi
+      __DFLT="\[\033[0m\]";
+  else
+      __USER="";
+      __HOST="";
+      __PATH="";
+      __DFLT="";
+  fi
+
+
+  # Only do this stuff if we're a non-interactive shell
+  if [ -n "$PS1" ]; then
+    # Linux >= 2.2.x supports fancy text mode cursors.
+    if [ "$OS" = "Linux" -a "$TERM" = "linux" ]; then
+      __RELEASE=`uname -r`;
+      if [ $(echo $__RELEASE | cut -d. -f1) -ge 2 -a $(echo $__RELEASE | cut -d. -f1) -ge 2 ]; then
+        echo -ne '\033[?64c';
+      fi
+    fi
+
+    PS1="$__DFLT[$__USER$USER$__DFLT@$__HOST\h$__DFLT]:$__PATH\w$__DFLT "'\$ ';
+
+    fortune 2> /dev/null;
+    echo "Happy hacking!";
+  fi
 fi
 
 # vim:syn=sh:ts=2:sw=2:et:ai
