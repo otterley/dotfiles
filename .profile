@@ -12,7 +12,7 @@ shopt -s histappend;
 shopt -s no_empty_cmd_completion;
 
 # Various settings.
-export LESS='-MR';		# `less' options.
+export LESS='-MRX';		# `less' options.
 HISTSIZE=2000;		# At most 2000 entries.
 HISTCONTROL=ignoredups;	# No duplicates.
 HISTIGNORE="&:ls:ls *:[bf]g:exit"
