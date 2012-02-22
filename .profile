@@ -48,6 +48,8 @@ else
     EDITOR=vi;
 fi
 
+export EDITOR;
+
 FCEDIT="$EDITOR";	# The editor used by the 'fc' builtin command.
 TEXTEDIT="$EDITOR";	# Some programs use TEXTEDIT instead.
 
