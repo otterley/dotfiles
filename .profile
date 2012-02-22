@@ -118,11 +118,6 @@ fi
 mkdir ~/tmp 2>/dev/null;
 TMPDIR=~/tmp;
 
-# Read the personal/site-dependent configuration file.
-if [ -f ~/.bashrc_local ]; then
-  . ~/.bashrc_local;
-fi
-
 # Set the PATH environment variable.  Add here as needed.  The system
 # provided PATH is ignored because we need to start from scratch every
 # time the shell is launched under a different user id.  Doing
@@ -311,6 +306,11 @@ if [ -t 0 ]; then
     fortune 2> /dev/null;
     echo "Happy hacking!";
   fi
+fi
+
+# Read the personal/site-dependent configuration file.
+if [ -f ~/.bashrc_local ]; then
+  . ~/.bashrc_local;
 fi
 
 # vim:syn=sh:ts=2:sw=2:et:ai
