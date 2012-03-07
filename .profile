@@ -14,8 +14,7 @@ shopt -s no_empty_cmd_completion;
 # Various settings.
 export LESS='-MRX';		# `less' options.
 HISTSIZE=2000;		# At most 2000 entries.
-HISTCONTROL=ignoredups;	# No duplicates.
-HISTIGNORE="&:ls:ls *:[bf]g:exit"
+HISTIGNORE="&:[bf]g:exit"
 IGNOREEOF=0;		# Exit bash at the first EOF.
 HISTFILE=~/.bash_history;
 FIGNORE='.o:.lo:.class:~';  # Ignore some files in file name completion.
@@ -186,6 +185,7 @@ function ssh()
 
 function rsa_modulus { openssl rsa -modulus -noout -in $1; }
 function x509_modulus { openssl x509 -modulus -noout -in $1; }
+function pick { git cherry-pick "$@"; }
 
 ##############################################################################
 # Only terminal-related stuff beyond this point
