@@ -131,7 +131,7 @@ if [ ! "$SYSTEM_PATH" ]; then
 fi
 
 # Use $HOME here, `/usr/bin/which' doesn't know how to expand `~'.
-PATH="$PATH:$HOME/bin:$HOME/sbin:/usr/local/bin:/usr/local/sbin";
+PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/usr/local/bin:/usr/local/sbin";
 PATH="$PATH:/usr/bin:/usr/sbin:/bin:/sbin";
 
 # Set the MANPATH environment variable.  Add here as needed.
@@ -145,6 +145,10 @@ if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
   source "$HOME/.rvm/scripts/rvm"
 elif [[ -s "/usr/local/lib/rvm" ]]; then
   source "/usr/local/lib/rvm"
+fi
+
+if type -p rbenv >/dev/null; then
+  eval "$(rbenv init -)"
 fi
 
 ##############################################################################
@@ -183,6 +187,10 @@ function ssh()
     $__SSH "$@";
 }
 
+alias ls='ls -FA' 2>/dev/null
+alias ll='ls -lFA' 2>/dev/null
+alias l.='ls -dFA .*' 2>/dev/null
+
 function rsa_modulus { openssl rsa -modulus -noout -in $1; }
 function x509_modulus { openssl x509 -modulus -noout -in $1; }
 function pick { git cherry-pick "$@"; }
@@ -193,67 +201,38 @@ function pick { git cherry-pick "$@"; }
 
 # Quit .profile if stdin is not a terminal.
 if [ -t 0 ]; then
-  if [ "$TERM" = "linux" -o\
-       "$TERM" = "aixterm" -o\
-       "$TERM" = "dtterm" -o\
-       "$TERM" = "iris-ansi" -o\
-       "$TERM" = "iris-ansi-net" -o\
-       "$TERM" = "xterm" -o\
-       "$TERM" = "xterm-256color" -o\
-       "$TERM" = "xterms" -o\
-       "$TERM" = "xterm-debian" -o\
-       "$TERM" = "rxvt" -o\
-       "$TERM" = "screen" -o\
-       "$TERM" = "xterm-color" -o\
-       "$TERM" = "cygwin" ]; then
-      __TERM_HAS_COLORS=yes;
-  else
-      __TERM_HAS_COLORS=no;
-  fi
-
-  # Unset COLORTERM if we're not running on a xterm-like terminal emulator.
-  if [ "$__TERM_HAS_COLORS" = "no" ]; then
-      unset -v COLORTERM;
-  fi
-
-  # Fancy ls.  You still get colors under Linux, even when you use a pipe.
-  # Make sure you use the regular ls (which is not modified by this file)
-  # when you _really_ need to filter out the color codes in pipes.
-  #
-  # This works for Linux only, the -C & -p options are different for HP-UX,
-  # Sun, etc.  To be fixed.
-  #
-  # Overwrite LS_OPTIONS defined by Linux in /etc/profile.
-  # BLACK/RED/GREEN/YELLOW/BLUE/MAGENTA/CYAN/WHITE: 0/../7
-  LS_COLORS="\
-  or=41:ln=34:bd=34:cd=35:pi=45;32:\
-  *.c=32:*.cc=32:*.cpp=32:*.h=32:*.java=32:*.l=32:*.y=32:*.s=32:\
-  *.m4=32:*.pl=32:*.el=32:*.lisp=32:*.in=32:\
-  *.o=34:*.a=34:*.so=34:*.lo=34:*.la=34:*.elc=34:*.class=34:\
-  *.ps=35:*.eps=35:*.fig=35:*.dvi=35:*.pdf=35:*.gif=35:*.jpg=35:*.jpeg=35:\
-  *.djv=35:*.tif=35:*.tiff=35:*.bmp=35:*.png=35:*.ppm=35:*.pgm=35:*.pbm=35:\
-  *.xpm=35:*.xpm=35:*.icon=35:*.ras=35:*.tga=35:*.mov=35:*.mpg=35:*.mpeg=35:\
-  *.avi=35:*.fli=35:*.flc=35:\
-  *.au=33:*.wav=33:*.mp3=33:*.ra=33:*.ram=33:*.mod=33:*.midi=33:*.voc=33:\
-  *.aiff=33:*.rmd=33:\
-  *.Z=31:*.bz2=31:*.gz=31:*.uu=31:*.shar=31:*.arj=31:*.zip=31:*.rar=31:\
-  *.jar=31:*.tar=31:*.tgz=31:*.taz=31:*.rpm=31:";
-
-  if [ "$TERM" = "linux" ]; then
-      LS_COLORS="$LS_COLORS:di=36;1:so=45;33;1:ex=44;33;1:";
-  else
-      LS_COLORS="$LS_COLORS:di=36:so=45;33:ex=44;33:";
-  fi
-
-  # OS X uses LSCOLORS instead.
-  LSCOLORS="hxfxcxdxbxegedabagacad"
-
-  if [ "$__TERM_HAS_COLORS" = "yes" -a -t 1 ]; then
-    __LS=$(type -p ls)
+  NCOLORS=`tty -s && tput colors 2>/dev/null`
+  if [ -n "$NCOLORS" -a "$NCOLORS" -gt 1 -a -n "$PS1" ] ; then
+    __TERM_HAS_COLORS="yes"
     if [ "$OS" = "Linux" ]; then
-      function ls() { $__LS -CFp --color=yes "$@"; };
+      COLORS=
+      for colors in "$HOME/.dir_colors.$TERM" "$HOME/.dircolors.$TERM" \
+          "$HOME/.dir_colors" "$HOME/.dircolors"; do
+        [ -e "$colors" ] && COLORS="$colors" && break
+      done
+
+      [ -z "$COLORS" ] && [ -e "/etc/DIR_COLORS.256color" ] && \
+          [ "x`tty -s && tput colors 2>/dev/null`" = "x256" ] && \
+          COLORS="/etc/DIR_COLORS.256color"
+
+      if [ -z "$COLORS" ]; then
+        for colors in "/etc/DIR_COLORS.$TERM" "/etc/DIR_COLORS" ; do
+          [ -e "$colors" ] && COLORS="$colors" && break
+        done
+      fi
+
+      # Existence of $COLORS already checked above.
+      if [ -n "$COLORS" ]; then
+        eval "`dircolors --sh "$COLORS" 2>/dev/null`"
+      fi
+      if ! grep -qi "^COLOR.*none" $COLORS >/dev/null 2>/dev/null; then
+        alias ls='ls -FA --color=auto' 2>/dev/null
+        alias ll='ls -lFA --color=auto' 2>/dev/null
+        alias l.='ls -dFA .* --color=auto' 2>/dev/null
+      fi
     elif [ "$OS" = "Darwin" ]; then
-      function ls() { $__LS -CFpG "$@"; };
+      export LSCOLORS="exfxcxdxbxegedabagacad"
+      export CLICOLOR=1
     fi
   fi
 
