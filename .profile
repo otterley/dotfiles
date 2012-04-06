@@ -21,12 +21,12 @@ FIGNORE='.o:.lo:.class:~';  # Ignore some files in file name completion.
 
 # Pager functions.
 if type -p less >/dev/null 2>&1; then
-    function pager() { less "$@"; }
-    function more()  { less "$@"; }
-    PAGER=less;
+  function pager() { less "$@"; }
+  function more()  { less "$@"; }
+  PAGER=less;
 else
-    function pager() { more "$@"; }
-    PAGER=more;
+  function pager() { more "$@"; }
+  PAGER=more;
 fi
 
 # GIT stuff.
@@ -41,10 +41,10 @@ type -path vim >/dev/null 2>&1;
 if [ $? -eq 0 ]; then HAVE_VIM=yes; else unset -v HAVE_VIM; fi
 
 if [ "$HAVE_VIM" ]; then
-    function vi { vim "$@"; }
-    EDITOR=vim;
+  function vi { vim "$@"; }
+  EDITOR=vim;
 else
-    EDITOR=vi;
+  EDITOR=vi;
 fi
 
 export EDITOR;
@@ -158,33 +158,38 @@ fi
 __SSH=$(type -path ssh 2>/dev/null);
 function ssh()
 {
-    local skip_sync;
-    if ! type -f rsync 2>&1 >/dev/null; then
-        # we don't have rsync.
-        skip_sync=1;
+  # This function overrides ssh to rsync all files listed in $HOME/.briefcase to
+  # the remote server before logging in.  It tries very hard to skip this if
+  # you're logging in as another user, but it cannot detect whether you have an
+  # alternate "User" defined in $HOME/.ssh/config or its /etc equivalent.  
+  # USE WITH CAUTION!
+  local skip_sync;
+  if ! type -f rsync 2>&1 >/dev/null; then
+    # we don't have rsync.
+    skip_sync=1;
+  fi
+  if [ ! -f "$HOME/.briefcase" ]; then
+    skip_sync=1;
+  fi
+  # skip ssh options to find hostname
+  while getopts ":1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:i:L:l:m:O:o:p:R:S:w:" Option; do
+    if [ "$Option" = "l" ]; then
+      # don't sync if we're logging into a different user's account
+      skip_sync=1;
+      break;
     fi
-    if [ ! -f "$HOME/.briefcase" ]; then
-        skip_sync=1;
-    fi
-    # skip ssh options to find hostname
-    while getopts ":1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:i:L:l:m:O:o:p:R:S:w:" Option; do
-        if [ "$Option" = "l" ]; then
-            # don't sync if we're logging into a different user's account
-            skip_sync=1;
-            break;
-        fi
-    done
-    server=`eval echo "$"$OPTIND`
-    # reset $OPTIND so that subsequent invocations work properly
-    OPTIND=1;
-    if echo "$server" | grep "@"; then
-        # don't sync if we're logging into a different user's account
-        skip_sync=1;
-    fi
-    if [ -z "$skip_sync" -a -z "$DISABLE_BRIEFCASE" ]; then
-        rsync -vurptgoDL -e ssh --files-from="$HOME/.briefcase" "$HOME" "$server":
-    fi
-    $__SSH "$@";
+  done
+  server=`eval echo "$"$OPTIND`
+  # reset $OPTIND so that subsequent invocations work properly
+  OPTIND=1;
+  if echo "$server" | grep "@"; then
+    # don't sync if we're logging into a different user's account
+    skip_sync=1;
+  fi
+  if [ -z "$skip_sync" -a -z "$DISABLE_BRIEFCASE" ]; then
+    rsync -vurptgoDL -e ssh --files-from="$HOME/.briefcase" "$HOME" "$server":
+  fi
+  $__SSH "$@";
 }
 
 alias ls='ls -FA' 2>/dev/null
@@ -224,11 +229,11 @@ if [ -t 0 ]; then
       # Existence of $COLORS already checked above.
       if [ -n "$COLORS" ]; then
         eval "`dircolors --sh "$COLORS" 2>/dev/null`"
-      fi
-      if ! grep -qi "^COLOR.*none" $COLORS >/dev/null 2>/dev/null; then
-        alias ls='ls -FA --color=auto' 2>/dev/null
-        alias ll='ls -lFA --color=auto' 2>/dev/null
-        alias l.='ls -dFA .* --color=auto' 2>/dev/null
+        if ! grep -qi "^COLOR.*none" $COLORS >/dev/null 2>/dev/null; then
+          alias ls='ls -FA --color=auto' 2>/dev/null
+          alias ll='ls -lFA --color=auto' 2>/dev/null
+          alias l.='ls -dFA .* --color=auto' 2>/dev/null
+        fi
       fi
     elif [ "$OS" = "Darwin" ]; then
       export LSCOLORS="exfxcxdxbxegedabagacad"
@@ -251,8 +256,8 @@ if [ -t 0 ]; then
        "$TERM" = "xterm-256color" -o\
        "$TERM" = "xterm-debian" -o\
        "$TERM" = "rxvt" ]; then
-      PROMPT_COMMAND='echo -ne "\033]1;$BASEHOSTNAME\007\033]2;$OS Shell"';
-      PROMPT_COMMAND="$PROMPT_COMMAND"'" - $USER@$BASEHOSTNAME : $PWD\007"';
+    PROMPT_COMMAND='echo -ne "\033]1;$BASEHOSTNAME\007\033]2;$OS Shell"';
+    PROMPT_COMMAND="$PROMPT_COMMAND"'" - $USER@$BASEHOSTNAME : $PWD\007"';
   else
       unset -v PROMPT_COMMAND;
   fi
@@ -260,15 +265,15 @@ if [ -t 0 ]; then
   # __USER, __HOST & __PATH can be defined in .sitedep, if colors are
   # supported.  Suggested by Andrei Pitis <pink@roedu.net>.
   if [ "$__TERM_HAS_COLORS" = "yes" ]; then
-      if [ -n $__USER ]; then __USER="\[\033[31m\]"; fi
-      if [ -n $__HOST ]; then __HOST="\[\033[32m\]"; fi
-      if [ -n $__PATH ]; then __PATH="\[\033[36m\]"; fi
-      __DFLT="\[\033[0m\]";
+    if [ -n $__USER ]; then __USER="\[\033[31m\]"; fi
+    if [ -n $__HOST ]; then __HOST="\[\033[32m\]"; fi
+    if [ -n $__PATH ]; then __PATH="\[\033[36m\]"; fi
+    __DFLT="\[\033[0m\]";
   else
-      __USER="";
-      __HOST="";
-      __PATH="";
-      __DFLT="";
+    __USER="";
+    __HOST="";
+    __PATH="";
+    __DFLT="";
   fi
 
 
