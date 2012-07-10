@@ -85,6 +85,7 @@ if has("autocmd")
 
   augroup END
 
+  autocmd BufWritePre * :%s/\s\+$//e
 else
 
   set autoindent		" always set autoindenting on

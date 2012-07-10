@@ -1,7 +1,7 @@
 [user]
-	email = michael@dynamine.net
 	name = Michael S. Fischer
 [alias]
+	commit = commit -v
 	co = checkout
 	ci = commit
 	br = branch

@@ -109,12 +109,6 @@ else
   fi
 fi
 
-# Link .bashrc to .profile
-if [ ! -L ~/.bashrc ]; then
-  rm ~/.bashrc 2> /dev/null;
-  ln -s ~/.profile ~/.bashrc;
-fi
-
 # Create my local ~/tmp directory.
 mkdir ~/tmp 2>/dev/null;
 TMPDIR=~/tmp;
@@ -131,7 +125,7 @@ if [ ! "$SYSTEM_PATH" ]; then
 fi
 
 # Use $HOME here, `/usr/bin/which' doesn't know how to expand `~'.
-PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/usr/local/bin:/usr/local/sbin";
+PATH="$PATH:$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/usr/local/bin:/usr/local/sbin";
 PATH="$PATH:/usr/bin:/usr/sbin:/bin:/sbin";
 
 # Set the MANPATH environment variable.  Add here as needed.
