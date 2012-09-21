@@ -155,7 +155,7 @@ function ssh()
   # This function overrides ssh to rsync all files listed in $HOME/.briefcase to
   # the remote server before logging in.  It tries very hard to skip this if
   # you're logging in as another user, but it cannot detect whether you have an
-  # alternate "User" defined in $HOME/.ssh/config or its /etc equivalent.  
+  # alternate "User" defined in $HOME/.ssh/config or its /etc equivalent.
   # USE WITH CAUTION!
   local skip_sync;
   if ! type -f rsync 2>&1 >/dev/null; then
@@ -281,7 +281,12 @@ if [ -t 0 ]; then
       fi
     fi
 
-    PS1="$__DFLT[$__USER$USER$__DFLT@$__HOST\h$__DFLT]:$__PATH\w$__DFLT "'\$ ';
+    if type -t __git_ps1 >/dev/null 2>&1; then
+      GIT_INFO="\$(__git_ps1)"
+    else
+      GIT_INFO=""
+    fi
+    PS1="$__DFLT[$__USER$USER$__DFLT@$__HOST\h$__DFLT]:$__PATH\w$__DFLT$GIT_INFO "'\$ ';
 
     fortune 2> /dev/null;
     echo "Happy hacking!";
