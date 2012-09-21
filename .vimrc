@@ -21,6 +21,10 @@ set modeline
 set modelines=5
 set rtp+=/usr/share/vim/addons
 
+" http://stackoverflow.com/questions/526858/how-do-i-make-vim-do-normal-bash-like-tab-completion-for-file-names
+set wildmode=longest,list,full
+set wildmenu
+
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
