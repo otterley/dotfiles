@@ -37,11 +37,12 @@ GIT_BROWSER="browser";
 OS="$(uname -sr|awk '$1=="SunOS"&&$2>5{print"Solaris";exit};{print$1}')"
 
 # Check for the presence of 'vim'.
-type -path vim >/dev/null 2>&1;
+VIMPATH=$(type -path vim 2>/dev/null);
 if [ $? -eq 0 ]; then HAVE_VIM=yes; else unset -v HAVE_VIM; fi
 
 if [ "$HAVE_VIM" ]; then
-  function vi { vim "$@"; }
+  function vi { $VIMPATH -O "$@"; }
+  function vim { $VIMPATH -O "$@"; }
   EDITOR=vim;
 else
   EDITOR=vi;
@@ -193,6 +194,7 @@ alias l.='ls -dFA .*' 2>/dev/null
 function rsa_modulus { openssl rsa -modulus -noout -in $1; }
 function x509_modulus { openssl x509 -modulus -noout -in $1; }
 function pick { git cherry-pick "$@"; }
+function myexternalip { curl http://ip.nefsc.noaa.gov/; }
 
 ##############################################################################
 # Only terminal-related stuff beyond this point
