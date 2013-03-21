@@ -187,6 +187,17 @@ function ssh()
   $__SSH "$@";
 }
 
+# Fixup ssh authentication socket.  This is useful in the context of resuming a
+# screen(1) or tmux(1) session, where the SSH_AUTH_SOCK environment variable
+# could point to a socket that was created when the session was launched but
+# no longer exists.
+
+if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.tmp/ssh_auth.sock" ]; then
+  mkdir -p $HOME/.tmp
+  ln -sf "$SSH_AUTH_SOCK" $HOME/.tmp/ssh_auth.sock
+  export SSH_AUTH_SOCK=$HOME/.tmp/ssh_auth.sock
+fi
+
 alias ls='ls -FA' 2>/dev/null
 alias ll='ls -lFA' 2>/dev/null
 alias l.='ls -dFA .*' 2>/dev/null
