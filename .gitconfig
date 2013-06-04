@@ -1,5 +1,6 @@
 [user]
 	name = Michael S. Fischer
+	email = mfischer@zendesk.com
 [alias]
 	commit = commit -v
 	co = checkout
