@@ -19,7 +19,7 @@ endif
 set nocompatible
 set modeline
 set modelines=5
-set rtp+=/usr/share/vim/addons
+set rtp+=/usr/share/vim/addons,~/.vim/vim-json
 
 " http://stackoverflow.com/questions/526858/how-do-i-make-vim-do-normal-bash-like-tab-completion-for-file-names
 set wildmode=longest,list,full
@@ -78,6 +78,8 @@ if has("autocmd")
   autocmd FileType ruby setlocal sw=2 ts=2 et ai
   autocmd FileType perl setlocal ts=4 sw=4 et ai
   autocmd FileType javascript setlocal ts=2 sw=2 et ai
+  autocmd FileType yaml setlocal ts=2 sw=2 et
+  autocmd FileType json setlocal ts=2 sw=2 et ai textwidth=78 formatoptions=cql
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it when the position is invalid or when inside an event handler

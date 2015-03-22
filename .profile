@@ -13,6 +13,7 @@ shopt -s no_empty_cmd_completion;
 
 # Various settings.
 export LESS='-MRX';		# `less' options.
+export GOPATH=$HOME/src/go
 HISTSIZE=2000;		# At most 2000 entries.
 HISTIGNORE="&:[bf]g:exit"
 IGNOREEOF=0;		# Exit bash at the first EOF.
@@ -126,7 +127,7 @@ if [ ! "$SYSTEM_PATH" ]; then
 fi
 
 # Use $HOME here, `/usr/bin/which' doesn't know how to expand `~'.
-PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/usr/local/bin:/usr/local/sbin";
+PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/opt/rbenv/bin:/usr/local/bin:/usr/local/sbin";
 PATH="$PATH:/usr/bin:/usr/sbin:/bin:/sbin";
 
 # Set the MANPATH environment variable.  Add here as needed.
@@ -135,14 +136,10 @@ MANPATH="$MANPATH:/usr/local/man";
 # We don't want to display the full host name on the xterm title...
 BASEHOSTNAME="`echo "$HOSTNAME" | cut -d. -f1`";
 
-# rvm initialization
-if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
-  source "$HOME/.rvm/scripts/rvm"
-elif [[ -s "/usr/local/lib/rvm" ]]; then
-  source "/usr/local/lib/rvm"
-fi
-
 if type -p rbenv >/dev/null; then
+  if [ -d /usr/local/var/rbenv ]; then
+    export RBENV_ROOT=/usr/local/var/rbenv
+  fi
   eval "$(rbenv init -)"
 fi
 
@@ -205,7 +202,9 @@ alias l.='ls -dFA .*' 2>/dev/null
 function rsa_modulus { openssl rsa -modulus -noout -in $1; }
 function x509_modulus { openssl x509 -modulus -noout -in $1; }
 function pick { git cherry-pick "$@"; }
-function myexternalip { curl http://ip.nefsc.noaa.gov/; }
+function myexternalip { curl http://jsonip.com/; echo; }
+function cheftrace { sudo $PAGER /var/chef/cache/chef-stacktrace.out; }
+function cheflog { $PAGER /var/log/chef/client.log; }
 
 ##############################################################################
 # Only terminal-related stuff beyond this point
