@@ -127,7 +127,7 @@ if [ ! "$SYSTEM_PATH" ]; then
 fi
 
 # Use $HOME here, `/usr/bin/which' doesn't know how to expand `~'.
-PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/opt/rbenv/bin:/usr/local/bin:/usr/local/sbin";
+PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/opt/rbenv/bin:/usr/local/go/bin:/usr/local/bin:/usr/local/sbin";
 PATH="$PATH:/usr/bin:/usr/sbin:/bin:/sbin";
 
 # Set the MANPATH environment variable.  Add here as needed.
