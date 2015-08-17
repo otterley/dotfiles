@@ -15,6 +15,7 @@ shopt -s no_empty_cmd_completion;
 export LESS='-MRX';		# `less' options.
 export GOPATH=$HOME/src/go
 HISTSIZE=2000;		# At most 2000 entries.
+HISTCONTROL="ignoreboth"
 HISTIGNORE="&:[bf]g:exit"
 IGNOREEOF=0;		# Exit bash at the first EOF.
 HISTFILE=~/.bash_history;
