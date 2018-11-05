@@ -105,7 +105,7 @@ LOGNAME="$USER";
 if [ "$USER" = "root" ]; then
   umask 022;
 else
-  if [ "$USER" = $(id -gn) ]; then
+  if [ "$USER" = "$(id -gn)" ]; then
     umask 002;
   else
     umask 022;
