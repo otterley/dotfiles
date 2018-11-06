@@ -105,3 +105,6 @@ if !exists(":DiffOrig")
   command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 		  \ | wincmd p | diffthis
 endif
+
+" Use system clipboard for copy/paste
+set clipboard=unnamedplus,unnamed,autoselect
