@@ -13,7 +13,7 @@ shopt -s no_empty_cmd_completion;
 
 # Various settings.
 export LESS='-MRX';		# `less' options.
-export GOPATH=$HOME/src/go
+export GOPATH=$HOME/go
 HISTSIZE=2000;		# At most 2000 entries.
 HISTCONTROL="ignoreboth"
 HISTIGNORE="&:[bf]g:exit"
@@ -128,7 +128,7 @@ if [ ! "$SYSTEM_PATH" ]; then
 fi
 
 # Use $HOME here, `/usr/bin/which' doesn't know how to expand `~'.
-PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/opt/rbenv/bin:/usr/local/go/bin:/usr/local/bin:/usr/local/sbin";
+PATH="$HOME/bin:$HOME/sbin:$HOME/.rbenv/bin:/opt/rbenv/bin:/usr/local/go/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/gettext/bin";
 PATH="$PATH:/usr/bin:/usr/sbin:/bin:/sbin";
 
 # Set the MANPATH environment variable.  Add here as needed.
